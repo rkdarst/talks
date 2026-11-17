@@ -78,6 +78,7 @@ exclude_patterns = [
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+#html_theme = 'furo'
 html_theme_options = {
     #"prev_next_buttons_location": False,
     "style_external_links": True,
