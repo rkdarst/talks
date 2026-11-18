@@ -37,9 +37,13 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx_lesson",
     'sphinx_misc_rkdarst.revealjs',
+    'sphinx_misc_rkdarst.inote',
     # remove once sphinx_rtd_theme updated for contrast and accessibility:
     "sphinx_rtd_theme_ext_color_contrast",
 ]
+
+#revealjs_hr_notes = False
+#revealjs_break_on_hr=True
 
 # Settings for myst_nb:
 # https://myst-nb.readthedocs.io/en/latest/computation/execute.html#notebook-execution-modes

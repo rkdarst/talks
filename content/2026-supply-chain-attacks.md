@@ -7,6 +7,19 @@ Richard Darst, 2026-11-16
 Audience: Research Engineers
 Purpose: Understand the problem, see possible solutions, discuss what to recommend to our users.
 
+:::{revealjs-notes}
+This is speaker notes
+:::
+
+...
+
+After the ellipsis, you find extra audience notes.  You can also view
+in presentation mode: {revealjs-link}`link`.  I'm testing this system
+so give feedback.
+
+This is audience notes you shouldn't see in the presentation.
+
+
 
 ## Cybersecurity
 
@@ -20,17 +33,24 @@ Surely people know why security is important.
 
 Hospital example: Stolen and shared medical records.  Deleting critical "allergy" info in a patient's record.  Ransomeware attack so you can't provide any heath care.
 
----
+
+:::{epigraph}
+epigraph
+:::
+
 
 ### Types of security vulnerabilities
 
-Most relevant terminology for us:
+Most relevant terminology for us (*not everything*):
 
 * Local privilege escalation
     * e.g. user --> root on cluster
 * Remote code execution
     * e.g. network user can run something on web server computer
-* 
+* Denial of Service
+  * Something stops working
+* Container escape
+  * Escape security boundaries like VMs or containers.
 
 ---
 
@@ -45,6 +65,14 @@ Prototype for us **Hacked PyPI upload which gets pulled into our cluster**
 * Quite common: we need many dependencies
 * Quite risky: research has many diverse dependencies.
 * Quite dangerous: poisoned dependencies can run anything.
+
+### What are SCA entry points?
+
+* Maintainer account compromise.
+* Maintainer decision.
+* Infrastructure compromise.
+* An earlier supply chain attack.
+* Typosquatting(?)
 
 ---
 
@@ -78,12 +106,16 @@ Prototype for us **Hacked PyPI upload which gets pulled into our cluster**
 * `litellm` - PyPI
     * Ran arbitrary code even on *install*
 
+:::{revealjs-notes}
+* Outlook outage and Chlorine poisoning
+:::
+
 
 ----
 
 ### So what can SCA:s do?
 
-* Anything: confidentility, integriety, availabity.
+* Anything: confidentiality, integriety, availabity.
 * Can affect at install time, run time, or in persistent services
 * Research is not exempt from these problems
 
