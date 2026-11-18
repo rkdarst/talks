@@ -1,6 +1,6 @@
 Sphinx
 sphinx_rtd_theme>=2.0
 sphinx_rtd_theme_ext_color_contrast
-furo
+#furo
 sphinx-lesson
 https://github.com/rkdarst/sphinx-misc-rkdarst/archive/refs/heads/master.zip

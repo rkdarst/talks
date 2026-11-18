@@ -100,6 +100,7 @@ Various observations:
     * One poisoned dependency affects every project
 * Dependencies can be pulled in recursively.
   * It's not just the dependencies you choose.
+  * This presentation has *91*!
 * Every new dependency is a risk.
 
 ----
@@ -260,42 +261,6 @@ $ vea --no-squash      # lets you `pip install` further`
 
 ## Discussion and/or demo
 
-PRE-QUESTION: do people want longer theory of venv-apptainer?
-
-* I can demo and discuss `venv-apptainer`
+* I can demo and discuss `venv-apptainer`.
+* I would be happy for other demos of similar solutions.
 * Any other questions and comments?
-
-
----
-
-## OLD BELOW HERE
-## Outline
-- Why is security important, CIA
-- Types of security vulnerabilities (small glossary)
-  - local privileged escalation, remote code execution, input validation, removal of dependencies
-  - These matter even in research, in different ways
-
-- Supply chain attacks - definition, what are the risks
-  - RCE - can be anything. A lot of credential steeling. Crypto mining
-  - Effects and risks
-  - Types of supply chains
-
-- History of some major ones
-  - (to be selected from the list below)
-
-- Possible solutions
-  - install cooldowns (meme: when everyone has a cooldown, no one does)
-  - pin dependencies
-  - venv-apptainer, moat
-  - Project vs user level isolation
-  - Contributions from the audience
-
-
-## List of famous supply chain attacks to consider
-  - leftpad - not security but affects ability to re-deploy
-  - Solar Winds
-  - libxz
-  - node-ipc (https://en.wikipedia.org/wiki/Peacenotwar)
-  - common: litellm
-  - Extensions in marketplaces (Claude Code in Cursor marketplace: https://phorion.io/blog/offical-claude-code-vsx-compromise/)
-  - https://x.com/binance/status/2117626126214504729?a=E58iUWbiQFFRjbf3tEU&s=46
