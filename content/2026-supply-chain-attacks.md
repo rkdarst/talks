@@ -1,42 +1,52 @@
-# Supply chain attacks
+# Supply chain attacks in scientific computing
 
 RSE seminar series
 Richard Darst, 2026-11-16
 
 
 Audience: Research Engineers
-Purpose: Understand the problem, see possible solutions, discuss what to recommend to our users.
+
+Purpose: Understand the problem, see possible solutions, discuss what
+to recommend to our users.  This is not a security-focused talk.
 
 :::{revealjs-notes}
-This is speaker notes
+* Discusison, not lecture
+* I'm not a security expert
+* I have a tool I use, but I'm not saying it is the solution.
 :::
 
 ...
 
-After the ellipsis, you find extra audience notes.  You can also view
-in presentation mode: {revealjs-link}`link`.  I'm testing this system
-so give feedback.
+This is made to be a presentation, and you can {revealjs-link}`see the
+presentition mode with ?revealjs`.  The content should be the same,
+but there is extra material in the reading view (after an ellipsis,
+you find extra audience notes).  I'm testing this sphinx + revealjs
+system, so give feedback.
 
-This is audience notes you shouldn't see in the presentation.
+This is not designed to be a lecture - it should be a discussion.  I
+am not a security expert, thought I have been around enough to give
+this talk.
 
 
 
 ## Cybersecurity
 
-Surely people know why security is important.
+Surely people know why security is important - it's the protection
+from harm from the **"CIA" triple**:
 
-"CIA" triple:
+* **Confidentiality loss**: does anyone else have access to the data
+* **Integrity loss**: is the data not modified?
+* **Availability loss**: can *you* access the data when needed?
 
-* **Confidentiality**: does anyone else have access to the data
-* **Integrity**: is the data not modified?
-* **Availability**: can *you* access the data when needed?
+Hospital example: Stolen and shared medical records.  Deleting
+critical "allergy" info in a patient's record.  Ransomeware attack so
+you can't provide any heath care.
 
-Hospital example: Stolen and shared medical records.  Deleting critical "allergy" info in a patient's record.  Ransomeware attack so you can't provide any heath care.
-
-
-:::{epigraph}
-epigraph
+:::{revealjs-notes}
+* We often think only of C, because of research
+* I and A less important, but still there.
 :::
+
 
 
 ### Types of security vulnerabilities
@@ -243,7 +253,8 @@ On host: everything contained in `./venva/`:
 ./venva/tmp/       --> Temporary work spaces (home, tmp)
 ```
 
-(pip/conda/uv/etc cache dirs are also mounted - but not the outside ones.)
+(pip/conda/uv/etc cache dirs are also mounted - but different ones
+than the system.)
 
 Inside container: `/venv-apptainer/` is a normal venv.  Other paths mounted as on host.
 
@@ -255,7 +266,7 @@ What I do:
 
 1. `vea` (auto-detect requirements, and make environment, and activates it)
 2. Run whatever (`sphinx-build`), wrapper `./venva/bin/sphinx-build` runs in container with $PWD mounted.
-3. do something else; come back later
+3. (do something else; come back later)
 4. `vea` (re-activates existing environment)
 
 Auto-detection for `requirements.txt`, `environment.yml`, `pylock.toml`, etc.
@@ -293,6 +304,5 @@ $ vea --no-squash      # lets you `pip install` further`
 
 ## Discussion and/or demo
 
-* I can demo and discuss `venv-apptainer`.
 * I would be happy for other demos of similar solutions.
 * Any other questions and comments?
