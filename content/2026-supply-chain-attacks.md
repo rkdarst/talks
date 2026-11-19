@@ -7,7 +7,8 @@ Richard Darst, 2026-11-16
 Audience: Research Engineers
 
 Purpose: Understand the problem, see possible solutions, discuss what
-to recommend to our users.  This is not a security-focused talk.
+to recommend to our users.  This is not a theoretical security-focused
+talk.
 
 :::{revealjs-notes}
 * Intro, discussion, not lecture
@@ -39,35 +40,35 @@ from harm from the **"CIA" triple**:
 * **Integrity loss**: is the data not modified?
 * **Availability loss**: can *you* access the data when needed?
 
-Hospital example: Stolen and shared medical records.  Deleting
-critical "allergy" info in a patient's record.  Ransomeware attack so
-you can't provide any heath care.
+Hospital example:
+* Stolen and shared medical records.
+* Deleting critical "allergy" info in a patient's record.
+* Ransomeware attack so you can't provide any heath care.
 
 :::{revealjs-notes}
 * We often think only of C, because of research
-* I and A are less important, but still there.
+* I and A are less important, but still relevant.
 :::
 
 
 
 
-### Types of security vulnerabilities
+### Background: some common security terminology
 
-Most relevant terminology for us (*not everything*):
-
-* Local privilege escalation
+* **Local privilege escalation**
     * e.g. user --> root on cluster
-* Remote code execution
+* **Remote code execution**
     * e.g. network user can run something on web server computer
-* Denial of Service
+* **Denial of Service**
   * Something stops working
-* Container escape
+* **Container escape**
   * Escape security boundaries like VMs or containers.
 
 Worth reading [wp:Computer
-Security](https://en.wikipedia.org/wiki/Computer_security] for more.
+Security](https://en.wikipedia.org/wiki/Computer_security) for more.
 
 :::{revealjs-notes}
+* These terms in the news a lot - **not only SCA:s**.
 * I'm not pretending this is an introduction to CompSec
 * But these are terms used for the latest vulnerabilities that come up
   (unrelated to SCAs)
@@ -76,7 +77,7 @@ Security](https://en.wikipedia.org/wiki/Computer_security] for more.
 
 
 
-### Supply chain attack
+### Supply chain attack (SCA)
 
 Wikipedia:
 
@@ -84,22 +85,27 @@ Wikipedia:
 >  organization by targeting less secure elements in the supply chain.
 
 Representative example: **Hacked PyPI account uploads package which
-gets pulled onto our cluster**
+gets pulled onto our cluster, stealing the user's ssh keys and other
+data.**
 
-* Common risk: we need many dependencies
+...
+
+* Common risk: we need many dependencies.
 * High risk: research has many diverse dependencies.
 * Dangerous risk: poisoned dependencies can run arbitrary code.
 
 
 
 
-### What are SCA entry points?
+### How do bad packages get into the supply chain?
+
+Ways to get a bad package in the supply chain:
 
 * Maintainer account compromise.
 * Maintainer decision to poison package.
 * Release infrastructure compromise.
 * An earlier supply chain attack.
-* Typosquatting(?)
+* ... any other security vulnerability.
 
 :::{revealjs-notes}
 * We mostly think about code execution,
@@ -108,10 +114,51 @@ gets pulled onto our cluster**
 :::
 
 
+### What can SCA:s do, once on your computer?
+
+Payload can run at install time, run time, or persist.
+
+* Anything: confidentiality, integrity, availability.
+* Most run code and extract information from your computer
+  * Tokens, SSH keys, files, data, ... (next slide)
+* Add files to your computer
+  * e.g. new SSH authorized keys
+* Research is not exempt from these risks.
+
+:::{revealjs-notes}
+* As an example, at `pip install` time
+* Python `.pth` file at interpreter startup
+* Python `import`-time
+:::
+
+
+
+### What info can an attack get from your computer?
+
+* Every file on your computer (e.g. secret files in `~/`)
+* Every environment variable
+* Environment variables from other processes (`/proc/*/environ`) (same
+  user)
+* Command line from other processes (`/proc/*/cmdline`) (every user)
+
+[Read more at the microsoft-agent analysis](https://www.stepsecurity.io/blog/microsoft-agent-framework-pypi-package-compromised#payload-capabilities)
+
+
+:::{revealjs-notes}
+Discussion
+* What happens if it runs on our cluster?
+* All user's data.
+
+END SECTION
+:::
 
 
 ## Example supply chain attacks
 
+:::{revealjs-notes}
+* Fun section to write - so many things to choose from.
+* This is only a small selection.
+:::
 
 
 
@@ -119,16 +166,15 @@ gets pulled onto our cluster**
 
 * `leftpad` - package removal ([ref](https://en.wikipedia.org/wiki/Npm_left-pad_incident))
    * npm author got mad and removed the package
-   * Many big sites failed building (denial of service).
-* Solar Winds - hack ([ref](https://en.wikipedia.org/wiki/SolarWinds#2019%E2%80%932020_supply_chain_attacks))
-    * US network monitoring company
-    * Hackers got into SolarWinds
-    * SolarWinds access allowed access to other US government sites
+   * Many sites failed building (denial of service).
+* Solar Winds hack ([ref](https://en.wikipedia.org/wiki/SolarWinds#2019%E2%80%932020_supply_chain_attacks))
+    * Network monitoring company.
+    * Hackers got into SolarWinds.
+    * SolarWinds access allowed access to other US government systems.
 * ``libxz`` ([ref](https://en.wikipedia.org/wiki/XZ_Utils_backdoor))
     * A new maintainer took over.
-    * Poisoned `libxz` such that it allowed `openssh` root login to a
+    * Whet `libxz` used in `openssh`, it allowed root login to a
       certain key.
-    * Allowed SSH access to compromised servers.
 
 
 
@@ -140,8 +186,10 @@ gets pulled onto our cluster**
     file on computer with heart emoji
 * Claude Code in *Cursor* extension marketplace
   ([ref](https://phorion.io/blog/offical-claude-code-vsx-compromise/))
-* `litellm` - PyPI uploads... twice in one year.  ([ref](https://en.wikipedia.org/wiki/LiteLLM#Security))
-  * Ran arbitrary code even on *install*
+  * Extension marketplaces often overlooked as a vector.
+* `litellm` ([ref](https://en.wikipedia.org/wiki/LiteLLM#Security))
+  * Attacked twice in one year.
+  * Ran arbitrary code even on *install*.
 
 
 
@@ -149,29 +197,24 @@ gets pulled onto our cluster**
 ### Honorable mentions, 3/3
 
 * Samsung fridge update bricking them ([ref](https://arstechnica.com/gadgets/2026/09/owners-mourn-spoiled-food-after-firmware-update-bricks-samsung-smart-fridges/))
-  * Accidental update... not an attack
+  * Accidental update... not an attack.
 * Cloud Strike update in 2026 ([ref](https://en.wikipedia.org/wiki/CrowdStrike#2024_IT_outages))
   * An auto-update to security software broke other services.
 * **Yesterday**: `agent-framework` on PyPI
   ([ref](https://www.stepsecurity.io/blog/microsoft-agent-framework-pypi-package-compromised))
   * Execute at Python startup via `.pth` file (no import needed)
-  * Malicious maintainer account added to project.
+  * Vector: malicious maintainer account added to project.
   * Credential stealer (conf files, env vars, /proc/*/environ)
 
 :::{revealjs-notes}
+* Look at agent-framework for an example of how bad it can be.
 * How deep does it go, to physical effects?:
   * Freezers turned to heat?
   * Outlook outage and Chlorine poisoning
+* Typosquatting?
+
+END SECTION
 :::
-
-
-
-### So what can SCA:s do?
-
-* Anything: confidentiality, integrity, availability.
-* Can affect at install time, run time, or in persistent services.
-* Research is not exempt from these problems.
-
 
 
 
@@ -179,12 +222,10 @@ gets pulled onto our cluster**
 
 Various observations:
 
-* Many types of SCA:s and we need to consider them.
-* Dependencies are what makes ecosystems useful
-  * e.g. extension marketplaces.
-* Most of our work is user-isolated, not project-isolated.
-    * One user account has access to many projects.
-    * One compromised dependency can affect *every* project's date.
+* Many types of SCA:s.
+* Dependencies
+  * Make ecosystems useful (e.g. extension marketplaces).
+  * But make more vectors.
 * Dependencies can be pulled in recursively.
   * It's not just the dependencies you choose.
   * This Sphinx project has 5 direct dependencies leading to *91*
@@ -192,14 +233,22 @@ Various observations:
 * Every new dependency is a risk.
 
 
+### Analysis: level of protection
+
+* Our primary protection seems to be "don't run anything un-approved".
+* Most of our work is user-isolated, not project-isolated.
+  * One user account has access to many projects.
+  * One compromised dependency can affect *every* project's date.
+* We are quite un-prepared.
 
 
 ### Analysis: my opinions
 
-* I don't want to run any internet-installed stuff without protection.
-* Containerizaton (protecting most of the filesystem is enough).
+* I don't want to run any custom environments without protection.
+* Containerizaton seems appropriate.
   * There can be SCA combined with container escape.
   * ... but still simple containerization reduces the blast radius a lot.
+* Can easily turn into "dump more stuff on our users"
 
 A universal solution seems unlikely.
 
@@ -208,7 +257,7 @@ A universal solution seems unlikely.
 
 ### Usability considerations
 
-Our protection should be:
+Our protection should:
 
 * *Easy to use* since it needs to be used *everywhere*.
 * Low start-up barrier (easy to use for every throw-away test)
@@ -216,6 +265,9 @@ Our protection should be:
 * Works local and remote
 * Easy to understand
 
+:::{revealjs-notes}
+END OF SECTION
+:::
 
 
 
@@ -223,13 +275,115 @@ Our protection should be:
 
 
 
+### Minimizing or reviewing dependencies
 
-### Possible solutions: broad categories
+* I think minimizing is a good idea, but not always practical.
+* IT Services think we get everything approved, but we know that's not
+  happening.
+* **Analysis: not enough**
+
+:::{revealjs-notes}
+* Reviewing everything is impossible.
+* Always good to use less stuff.
+* Science still needs lots of weird dependencies.
+* Joke: Can AI re-write everything for your own code so you don't need
+  dependencies anymore?
+:::
+
+
+
+### Cooldowns
+
+* Concept: a package must be on the archive for X days before it is
+  eligible for installation
+* For example
+  * `uv pip install --exclude-newer '3 days' foo`
+  * `pip install --uploaded-prior-to P3D foo`
+  * See more: <https://cooldowns.dev/>
+* Side-effect: delays security updates.
+* **Analysis: good practice, usable, not enough for my tastes.**
+
+
+:::{revealjs-notes}
+* Buffer time between upload and first install
+* If everyone uses, then ???
+* But at least it gives automated scanners time
+:::
+
+
+### Locking dependencies
+
+e.g. `pylock.toml`, `uv.lock`
+
+* Create lockfile with exact versions for your environment.
+* Fewer updates --> smaller attack window.
+* Good practice for research.
+* Maybe not flexible enough for developers
+
+:::{revealjs-notes}
+* This is a good idea, but for me...
+  * I want to rotate dependencies in my dev environment frequently
+  * and find breaking updates quickly.
+:::
+
+
+### Containerization and Linux namespaces
+
+e.g. run in Apptainer.
+
+* Reasonable (but "containers aren't designed for security").
+* Still much better than nothing.
+* e.g. Apptainer, bubblewrap
+* **Analysis: not perfect but good.  Needs usability to be widely
+  adopted.**
+
+:::{revealjs-notes}
+* I like this
+* You know Apptainer
+* Bubblewrap more directly uses namespaces
+* I made a way to use containers without building a new one
+:::
+
+
+
+### VMs, separate accounts, enclaves, etc
+
+* Request separate VMS for everything?
+* Isolate projects by separate user accounts?
+* **Analysis: too heavyweight to be widely used at the scale we need.**
+
+:::{revealjs-notes}
+* I guess we know what virtual machines are
+* Also separate user account ideas
+* Too heavyweight
+:::
+
+
+
+
+### Hierarchy of controls
+
+This is a concept from industrial safety:
+
+```{image} https://upload.wikimedia.org/wikipedia/commons/3/36/NIOSH%E2%80%99s_%E2%80%9CHierarchy_of_Controls_infographic%E2%80%9D_as_SVG.svg
+```
+
+Where does each solution fit?
+
+[image: [NIOSH via Wikimedia Commons](https://commons.wikimedia.org/wiki/File:NIOSH_Hierarchy_of_Controls.png)]
+
+:::{revealjs-notes}
+* You know I need something about accident investigations, right?
+:::
+
+
+
+### Possible solutions: a list
 
 * Minimize dependencies
 * Review every dependency
 * Lock dependencies, update infrequently
-* "Cooldowns"
+* "Cooldowns" (delayed install)
 * Containers: Apptainer, etc.
 * Separate user accounts for different projects
 * Virtual machines for each project
@@ -245,63 +399,11 @@ Our protection should be:
   * Software bill of materials (list dependencies)
   * Legislate liabilities
   * Ask about economic impact of regulation
+
+What is practical?  --> Discussion later
+
+END OF SECTION
 :::
-
-
-### Minimizing or reviewing dependencies
-
-* I think minimizing is a good idea, but not always practical.
-* IT Services think we get everything approved, but we know that's not
-  happening.
-* **Analysis: not enough**
-
-
-
-### Cooldowns
-
-* Concept: a package must be on the archive for X days before it is
-  eligible for installation
-* For example
-  * `uv pip install --exclude-newer '3 days' foo`
-  * `pip install --uploaded-prior-to P3D foo`
-  * See more: https://cooldowns.dev/
-* Can delay security updates.
-* **Analysis: good practice, usable, not enough for my tastes.**
-
-
-:::{revealjs-notes}
-* If everyone uses, then ???
-* But at least it gives automated scanners time
-:::
-
-
-
-### Containerization
-
-* Reasonable but containers aren't perfect for security.
-* Still much better than nothing.
-* **Analysis: not perfect but good enough.  Needs usability for common
-  workflows**
-
-
-
-### VMs, separate accounts, enclaves, etc
-
-* **Analysis: too heavyweight to be used to isolate everything we work
-  on.**
-
-
-
-### Hierarchy of controls
-
-This is a concept from industrial safety:
-
-```{image} https://upload.wikimedia.org/wikipedia/commons/3/36/NIOSH%E2%80%99s_%E2%80%9CHierarchy_of_Controls_infographic%E2%80%9D_as_SVG.svg
-```
-
-Where does each solution fit?
-
-[image: [NIOSH via Wikimedia Commons](https://commons.wikimedia.org/wiki/File:NIOSH_Hierarchy_of_Controls.png)]
 
 
 
@@ -312,10 +414,17 @@ Where does each solution fit?
   * Should have more docs and testing before wide usage.
 * This demo is to give some technical aspect to the seminar.
 
+:::{revealjs-notes}
+* Wanted to say something technical
+* Not saying this is the best (but it works well for me)
+* Go/no-go for the section?
+:::
+
+
 
 ### Executive summary
 
-* I (rkdarst) made this: https://github.com/rkdarst/venv-apptainer
+* I (rkdarst) made this: <https://github.com/rkdarst/venv-apptainer>
 
 ```console
 $ vea
@@ -326,7 +435,7 @@ $ python my_file.py
 ... runs isolated to $PWD automatically
 ```
 
-* Designed for standalone projects
+* Designed for standalone project dir isolation
 * Supports pip, conda, uv
 * I've used it for every `pip install` since june-ish.
 
@@ -334,12 +443,12 @@ $ python my_file.py
 
 ### Background and history
 
-* From Radovan: apptainer-venv had `ve` alias for NixOS.
+* From Radovan: told me of a `ve` alias for making envs.
 * For years, I've had a `ve` shell function that:
   * makes `./venv/` if it doesn't exist
+    * automatically installs `requirements.txt`
   * activates `./venv/` if it exists
-  * automatically installs `requirements.txt`
-* I wanted to upgrade this for containers.
+* I wanted a new version using containers.
 
 
 
@@ -350,11 +459,10 @@ I wanted something with:
 * `$PWD` mounted in the container (and nothing else).
 * Suitable for mass use: easy `venv` for every project.
 * No config files - simple use case only.
-* Safe by default. Add more mounted paths if needed.
-* Wrapper scripts for binaries in the environment (no need to define
-  commands to run)
+* Safe by default.
+* Wrapper scripts for binaries in the environment (easy execution).
 * *Not* building a new container for every project.
-* 100% human written
+* 100% human written.
 
 
 
@@ -362,7 +470,7 @@ I wanted something with:
 
 On host: everything contained in `./venva/`:
 
-```console
+```
 ./venva/          --> Base dir
 ./venva/*.squashfs --> generated squashfs of env
 ./venva/exec      --> Execution wrapper (shell or command)
@@ -373,43 +481,42 @@ On host: everything contained in `./venva/`:
 
 (pip/conda/uv/etc cache dirs are also mounted)
 
-Inside container layout: `/venv-apptainer/` is the venv.  Other paths
-mounted as on host.
+Inside container layout: 
+
+* `/venv-apptainer/` is the venv.
+* Other paths mounted as on the host (`$PWD`, etc.).
 
 
 
 ### Usage (my automation)
 
+Has my preferred auto-detection for `requirements.txt`,
+`environment.yml`, `pylock.toml`, etc.
+
 What I do:
 
 1. `vea` (auto-detect requirements, and make environment, and activates it)
-2. Run whatever (`sphinx-build`), wrapper `./venva/bin/sphinx-build` runs in container with $PWD mounted.
-3. (do something else; come back later)
-4. `vea` (re-activates existing environment)
+2. Run whatever (`sphinx-build`), wrapper `./venva/bin/sphinx-build`
+   runs in container with `$PWD` mounted.
 
-Auto-detection for `requirements.txt`, `environment.yml`, `pylock.toml`, etc.
+(do something else; come back later):
+
+3. `vea` (re-activates existing environment)
 
 
 
-### Usage: Manual control
+### Usage: Manual control of install
 
-Various way to make an environment, passing through options to
-pip/uv/miniconda to run inside:
+Can flexibly control the install options:
 
 ```console
 $ vea --pip -r requirements.txt other_dependency
 $ vea --conda -f env-test.yml
 $ vea --uv sync
 $ vea --uv pip install ARGS
-```
-
-Advanced control:
-```console
-## pip install -e of another project
+## `pip install -e` of another project to here
 $ vea --bind-ro ../other/ -r requirements.txt -e ../other/
-$ vea --no-squash      # lets you `pip install` further`
 ```
-
 ...
 
 Want to try it yourself?
@@ -426,18 +533,25 @@ I've added the advanced options I need:
 
 * Custom binds (`--bind`, `--bind-ro`)
 * Custom images (`--img`)
+* No squashfs (env can be updated): `--no-squash`
 
 Limitations:
 
 * Not designed for system library integration (GPU, Slurm) but could
   probably be added.
 
+:::{revealjs-notes}
+END OF SECTION
+:::
 
 
 
-## Discussion and/or demo
+## Wrap up and discussion
 
-* I would be happy if anyone else demoed solutions
+* I would be happy if anyone else demoed solutions.
+* Most usable solutions for researchers?
+* How can we search for bad packages?
+  * Can hide in environments, containers, ...
 * Any other questions and comments?
 
 
@@ -448,4 +562,6 @@ Limitations:
     * Effect on open source
 	* Paper security != real security (CloudStrike) ("is inserting one
       software into every critical path really security?")
+* On my side I learned I need --pid in venv-apptainer.
+* Trust the user vs block the user (e.g. locked-down OS)
 :::
