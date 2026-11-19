@@ -19,13 +19,13 @@ talk.
 ...
 
 This is made to be a presentation, and you can {revealjs-link}`see the
-presentition mode with ?revealjs`.  The content should be the same,
+presentation mode with ?revealjs`.  The content should be the same,
 but there is extra material in the reading view (after an ellipsis,
 you find extra audience notes).  I'm testing this sphinx + revealjs
 system, so give feedback.
 
 This is not designed to only be a lecture - it should be a discussion.
-I am not a security expert, thought I have been around enough to give
+I am not a security expert, though I have been around enough to give
 this talk.
 
 
@@ -34,16 +34,16 @@ this talk.
 ## Cybersecurity
 
 Surely people know why security is important - it's the protection
-from harm from the **"CIA" triple**:
+from harm from the **"CIA" triad**:
 
-* **Confidentiality loss**: does anyone else have access to the data
+* **Confidentiality loss**: does anyone else have access to the data?
 * **Integrity loss**: is the data not modified?
 * **Availability loss**: can *you* access the data when needed?
 
 Hospital example:
 * Stolen and shared medical records.
 * Deleting critical "allergy" info in a patient's record.
-* Ransomeware attack so you can't provide any heath care.
+* Ransomware attack so you can't provide any health care.
 
 :::{revealjs-notes}
 * We often think only of C, because of research
@@ -56,9 +56,9 @@ Hospital example:
 ### Background: some common security terminology
 
 * **Local privilege escalation**
-    * e.g. user --> root on cluster
+  * e.g. user --> root on cluster
 * **Remote code execution**
-    * e.g. network user can run something on web server computer
+  * e.g. network user can run something on web server computer
 * **Denial of Service**
   * Something stops working
 * **Container escape**
@@ -82,10 +82,10 @@ Security](https://en.wikipedia.org/wiki/Computer_security) for more.
 Wikipedia:
 
 > A supply chain attack is a cyber-attack that seeks to damage an
->  organization by targeting less secure elements in the supply chain.
+> organization by targeting less secure elements in the supply chain.
 
 Representative example: **Hacked PyPI account uploads package which
-gets pulled onto our cluster, stealing the user's ssh keys and other
+gets pulled onto our cluster, stealing the user's SSH keys and other
 data.**
 
 ...
@@ -147,7 +147,7 @@ Payload can run at install time, run time, or persist.
 :::{revealjs-notes}
 Discussion
 * What happens if it runs on our cluster?
-* All user's data.
+* All users' data.
 
 END SECTION
 :::
@@ -164,16 +164,16 @@ END SECTION
 
 ### Example supply chain attacks, 1/3
 
-* `leftpad` - package removal ([ref](https://en.wikipedia.org/wiki/Npm_left-pad_incident))
+* `left-pad` - package removal ([ref](https://en.wikipedia.org/wiki/Npm_left-pad_incident))
    * npm author got mad and removed the package
    * Many sites failed building (denial of service).
-* Solar Winds hack ([ref](https://en.wikipedia.org/wiki/SolarWinds#2019%E2%80%932020_supply_chain_attacks))
+* SolarWinds hack ([ref](https://en.wikipedia.org/wiki/SolarWinds#2019%E2%80%932020_supply_chain_attacks))
     * Network monitoring company.
     * Hackers got into SolarWinds.
     * SolarWinds access allowed access to other US government systems.
-* ``libxz`` ([ref](https://en.wikipedia.org/wiki/XZ_Utils_backdoor))
+* ``xz-utils`` ([ref](https://en.wikipedia.org/wiki/XZ_Utils_backdoor))
     * A new maintainer took over.
-    * Whet `libxz` used in `openssh`, it allowed root login to a
+    * When `liblzma` used in OpenSSH, it allowed root login to a
       certain key.
 
 
@@ -194,11 +194,11 @@ END SECTION
 
 
 
-### Honorable mentions, 3/3
+### Honorable mentions, 3/3 (1-2 aren't attacks)
 
 * Samsung fridge update bricking them ([ref](https://arstechnica.com/gadgets/2026/09/owners-mourn-spoiled-food-after-firmware-update-bricks-samsung-smart-fridges/))
   * Accidental update... not an attack.
-* Cloud Strike update in 2026 ([ref](https://en.wikipedia.org/wiki/CrowdStrike#2024_IT_outages))
+* CrowdStrike update in 2024 ([ref](https://en.wikipedia.org/wiki/CrowdStrike#2024_IT_outages))
   * An auto-update to security software broke other services.
 * **Yesterday**: `agent-framework` on PyPI
   ([ref](https://www.stepsecurity.io/blog/microsoft-agent-framework-pypi-package-compromised))
@@ -210,7 +210,7 @@ END SECTION
 * Look at agent-framework for an example of how bad it can be.
 * How deep does it go, to physical effects?:
   * Freezers turned to heat?
-  * Outlook outage and Chlorine poisoning
+  * Outlook outage and chlorine poisoning
 * Typosquatting?
 
 END SECTION
@@ -238,14 +238,14 @@ Various observations:
 * Our primary protection seems to be "don't run anything un-approved".
 * Most of our work is user-isolated, not project-isolated.
   * One user account has access to many projects.
-  * One compromised dependency can affect *every* project's date.
+  * One compromised dependency can affect *every* project's data.
 * We are quite un-prepared.
 
 
 ### Analysis: my opinions
 
 * I don't want to run any custom environments without protection.
-* Containerizaton seems appropriate.
+* Containerization seems appropriate.
   * There can be SCA combined with container escape.
   * ... but still simple containerization reduces the blast radius a lot.
 * Can easily turn into "dump more stuff on our users"
@@ -278,7 +278,7 @@ END OF SECTION
 ### Minimizing or reviewing dependencies
 
 * I think minimizing is a good idea, but not always practical.
-* IT Services think we get everything approved, but we know that's not
+* IT Services thinks we get everything approved, but we know that's not
   happening.
 * **Analysis: not enough**
 
@@ -286,7 +286,7 @@ END OF SECTION
 * Reviewing everything is impossible.
 * Always good to use less stuff.
 * Science still needs lots of weird dependencies.
-* Joke: Can AI re-write everything for your own code so you don't need
+* Joke: Can AI rewrite everything for your own code so you don't need
   dependencies anymore?
 :::
 
@@ -348,7 +348,7 @@ e.g. run in Apptainer.
 
 ### VMs, separate accounts, enclaves, etc
 
-* Request separate VMS for everything?
+* Request separate VMs for everything?
 * Isolate projects by separate user accounts?
 * **Analysis: too heavyweight to be widely used at the scale we need.**
 
@@ -385,6 +385,7 @@ Where does each solution fit?
 * Lock dependencies, update infrequently
 * "Cooldowns" (delayed install)
 * Containers: Apptainer, etc.
+* Automated scanning?
 * Separate user accounts for different projects
 * Virtual machines for each project
 * Secure data enclaves (CSC SD-services, Aalto SecData)
@@ -437,7 +438,7 @@ $ python my_file.py
 
 * Designed for standalone project dir isolation
 * Supports pip, conda, uv
-* I've used it for every `pip install` since june-ish.
+* I've used it for every `pip install` since June-ish.
 
 
 
@@ -481,7 +482,7 @@ On host: everything contained in `./venva/`:
 
 (pip/conda/uv/etc cache dirs are also mounted)
 
-Inside container layout: 
+Inside container layout:
 
 * `/venv-apptainer/` is the venv.
 * Other paths mounted as on the host (`$PWD`, etc.).
@@ -495,7 +496,7 @@ Has my preferred auto-detection for `requirements.txt`,
 
 What I do:
 
-1. `vea` (auto-detect requirements, and make environment, and activates it)
+1. `vea` (auto-detect requirements, and make environment and activate it)
 2. Run whatever (`sphinx-build`), wrapper `./venva/bin/sphinx-build`
    runs in container with `$PWD` mounted.
 
@@ -521,9 +522,9 @@ $ vea --bind-ro ../other/ -r requirements.txt -e ../other/
 
 Want to try it yourself?
 
-* **You have requirements.txt and use pip**: ``vea``
-* **You have environment.yml and use miniconda**: ``vea``
-* **You have pyproject.toml and use uv**: ``vea --uv sync``
+* **You have requirements.txt and use pip**: `vea`
+* **You have environment.yml and use miniconda**: `vea`
+* **You have pyproject.toml and use uv**: `vea --uv sync`
 
 
 
@@ -549,7 +550,7 @@ END OF SECTION
 ## Wrap up and discussion
 
 * I would be happy if anyone else demoed solutions.
-* Most usable solutions for researchers?
+* Most **usable** solutions for researchers?
 * How can we search for bad packages?
   * Can hide in environments, containers, ...
 * Any other questions and comments?
@@ -560,7 +561,7 @@ END OF SECTION
 * There is plenty more legal and administrative stuff
   * Cyber Resilience Act
     * Effect on open source
-	* Paper security != real security (CloudStrike) ("is inserting one
+    * Paper security != real security (CrowdStrike) ("is inserting one
       software into every critical path really security?")
 * On my side I learned I need --pid in venv-apptainer.
 * Trust the user vs block the user (e.g. locked-down OS)
