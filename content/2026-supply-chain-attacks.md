@@ -152,6 +152,11 @@ gets pulled onto our cluster**
   * Accidental update... not an attack
 * Cloud Strike update in 2026 ([ref](https://en.wikipedia.org/wiki/CrowdStrike#2024_IT_outages))
   * An auto-update to security software broke other services.
+* **Yesterday**: `agent-framework` on PyPI
+  ([ref](https://www.stepsecurity.io/blog/microsoft-agent-framework-pypi-package-compromised))
+  * Execute at Python startup via `.pth` file (no import needed)
+  * Malicious maintainer account added to project.
+  * Credential stealer (conf files, env vars, /proc/*/environ)
 
 :::{revealjs-notes}
 * How deep does it go, to physical effects?:
