@@ -1,7 +1,7 @@
 # Supply chain attacks (SCAs) in scientific computing
 
 RSE seminar series
-Richard Darst, 2026-11-16
+Richard Darst, 2026-11-20
 
 
 Audience: Research Engineers
