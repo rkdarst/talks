@@ -1,0 +1,812 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="revealjs-options" content="{}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supply chain attacks (SCAs) in scientific computing &mdash; rkdarst&#39;s misc talks</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx_lesson.css?v=e9df6548" />
+      <link rel="stylesheet" type="text/css" href="../_static/term_role_formatting.css?v=4194e21c" />
+      <link rel="stylesheet" type="text/css" href="../_static/inote.css?v=54d43699" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx_rtd_theme_ext_color_contrast.css?v=01954304" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=187304be"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=35a8b989"></script>
+      <script src="../_static/minipres.js?v=a0d29692"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../_static/togglebutton.js?v=b8b12719"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script data-break-on-hr="true" data-ellipsis-notes="true" data-font-scale="2.0" data-hr-notes="false" data-param="revealjs" data-theme="none" src="../_static/revealjs/bootstrap.js?v=b8089b2e"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="prev" title="Misc talks" href="../" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            rkdarst's misc talks
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Supply chain attacks (SCAs) in scientific computing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cybersecurity">Cybersecurity</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#background-some-common-security-terminology">Background: some common security terminology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#supply-chain-attack-sca">Supply chain attack (SCA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-do-bad-packages-get-into-the-supply-chain">How do bad packages get into the supply chain?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-can-sca-s-do-once-on-your-computer">What can SCA:s do, once on your computer?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-info-can-an-attack-get-from-your-computer">What info can an attack get from your computer?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#example-supply-chain-attacks">Example supply chain attacks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-supply-chain-attacks-1-3">Example supply chain attacks, 1/3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-supply-chain-attacks-2-3">Example supply chain attacks, 2/3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#honorable-mentions-3-3-1-2-aren-t-attacks">Honorable mentions, 3/3 (1-2 aren’t attacks)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#analysis">Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#analysis-level-of-protection">Analysis: level of protection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analysis-my-opinions">Analysis: my opinions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usability-considerations">Usability considerations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#possible-solutions">Possible solutions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#minimizing-or-reviewing-dependencies">Minimizing or reviewing dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cooldowns">Cooldowns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#locking-dependencies">Locking dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#containerization-and-linux-namespaces">Containerization and Linux namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vms-separate-accounts-enclaves-etc">VMs, separate accounts, enclaves, etc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hierarchy-of-controls">Hierarchy of controls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#possible-solutions-a-list">Possible solutions: a list</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#demo-venv-apptainer">Demo: venv-apptainer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#executive-summary">Executive summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#background-and-history">Background and history</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#design-basis">Design basis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#filesystem-layout-of-venva">Filesystem layout of <code class="docutils literal notranslate"><span class="pre">./venva/</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage-my-automation">Usage (my automation)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage-manual-control-of-install">Usage: Manual control of install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-options">Advanced options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#wrap-up-and-discussion">Wrap up and discussion</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">rkdarst's misc talks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Supply chain attacks (SCAs) in scientific computing</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/rkdarst/content/blob/master/content/2026-supply-chain-attacks.md" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="supply-chain-attacks-scas-in-scientific-computing">
+<h1>Supply chain attacks (SCAs) in scientific computing<a class="headerlink" href="#supply-chain-attacks-scas-in-scientific-computing" title="Link to this heading"></a></h1>
+<p>RSE seminar series
+Richard Darst, 2026-11-20</p>
+<p>Audience: Research Engineers</p>
+<p>Purpose: Understand the problem, see possible solutions, discuss what
+to recommend to our users.  This is not a theoretical security-focused
+talk.</p>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>Intro, discussion, not lecture</p></li>
+<li><p>I’m not a security expert, this isn’t a security talk.</p></li>
+<li><p>I have a tool I use, but I’m not saying it is the solution.</p></li>
+</ul>
+</div>
+<p>…</p>
+<p>This is made to be a presentation, and you can <a class="revealjs-link reference external" href="?revealjs">see the presentation mode with ?revealjs</a>.  The content should be the same,
+but there is extra material in the reading view (after an ellipsis,
+you find extra audience notes).  I’m testing this sphinx + revealjs
+system, so give feedback.</p>
+<p>This is not designed to only be a lecture - it should be a discussion.
+I am not a security expert, though I have been around enough to give
+this talk.</p>
+<section id="cybersecurity">
+<h2>Cybersecurity<a class="headerlink" href="#cybersecurity" title="Link to this heading"></a></h2>
+<p>Surely people know why security is important - it’s the protection
+from harm from the <strong>“CIA” triad</strong>:</p>
+<ul class="simple">
+<li><p><strong>Confidentiality loss</strong>: does anyone else have access to the data?</p></li>
+<li><p><strong>Integrity loss</strong>: is the data not modified?</p></li>
+<li><p><strong>Availability loss</strong>: can <em>you</em> access the data when needed?</p></li>
+</ul>
+<p>Hospital example:</p>
+<ul class="simple">
+<li><p>Stolen and shared medical records.</p></li>
+<li><p>Deleting critical “allergy” info in a patient’s record.</p></li>
+<li><p>Ransomware attack so you can’t provide any health care.</p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>We often think only of C, because of research</p></li>
+<li><p>I and A are less important, but still relevant.</p></li>
+</ul>
+</div>
+<section id="background-some-common-security-terminology">
+<h3>Background: some common security terminology<a class="headerlink" href="#background-some-common-security-terminology" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Local privilege escalation</strong></p>
+<ul>
+<li><p>e.g. user –&gt; root on cluster</p></li>
+</ul>
+</li>
+<li><p><strong>Remote code execution</strong></p>
+<ul>
+<li><p>e.g. network user can run something on web server computer</p></li>
+</ul>
+</li>
+<li><p><strong>Denial of Service</strong></p>
+<ul>
+<li><p>Something stops working</p></li>
+</ul>
+</li>
+<li><p><strong>Container escape</strong></p>
+<ul>
+<li><p>Escape security boundaries like VMs or containers.</p></li>
+</ul>
+</li>
+</ul>
+<p>Worth reading <a class="reference external" href="https://en.wikipedia.org/wiki/Computer_security">wp:Computer
+Security</a> for more.</p>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>These terms in the news a lot - <strong>not only SCA:s</strong>.</p></li>
+<li><p>I’m not pretending this is an introduction to CompSec</p></li>
+<li><p>But these are terms used for the latest vulnerabilities that come up
+(unrelated to SCAs)</p></li>
+</ul>
+</div>
+<p>…</p>
+<p>I mention these just because you have probably been hearing a lot
+about HPC cluster security lately, and these are the most important
+terms.  Reading the linked Wikipedia article is probably a good
+summary for everyone.</p>
+</section>
+<section id="supply-chain-attack-sca">
+<h3>Supply chain attack (SCA)<a class="headerlink" href="#supply-chain-attack-sca" title="Link to this heading"></a></h3>
+<p>Wikipedia:</p>
+<blockquote>
+<div><p>A supply chain attack is a cyber-attack that seeks to damage an
+organization by targeting less secure elements in the supply chain.</p>
+</div></blockquote>
+<p>Representative example: <strong>Hacked PyPI account uploads package which
+gets pulled onto our cluster, stealing the user’s SSH keys and other
+data.</strong></p>
+<p>…</p>
+<ul class="simple">
+<li><p>Common risk: we need many dependencies.</p></li>
+<li><p>High risk: research has many diverse dependencies.</p></li>
+<li><p>Dangerous risk: poisoned dependencies can run arbitrary code.</p></li>
+</ul>
+</section>
+<section id="how-do-bad-packages-get-into-the-supply-chain">
+<h3>How do bad packages get into the supply chain?<a class="headerlink" href="#how-do-bad-packages-get-into-the-supply-chain" title="Link to this heading"></a></h3>
+<p>Ways to get a bad package in the supply chain:</p>
+<ul class="simple">
+<li><p>Maintainer account compromise.</p></li>
+<li><p>Maintainer decision to poison package.</p></li>
+<li><p>Release infrastructure compromise.</p></li>
+<li><p>An earlier supply chain attack.</p></li>
+<li><p>… any other security vulnerability.</p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>We mostly think about code execution,</p></li>
+<li><p>… but it can be much more.</p></li>
+<li><p>Is Denial of Service a SCA?</p></li>
+</ul>
+</div>
+</section>
+<section id="what-can-sca-s-do-once-on-your-computer">
+<h3>What can SCA:s do, once on your computer?<a class="headerlink" href="#what-can-sca-s-do-once-on-your-computer" title="Link to this heading"></a></h3>
+<p>Payload can run at install time, run time, or persist.</p>
+<ul class="simple">
+<li><p>Anything: confidentiality, integrity, availability.</p></li>
+<li><p>Most run code and extract information from your computer</p>
+<ul>
+<li><p>Tokens, SSH keys, files, data, … (next slide)</p></li>
+</ul>
+</li>
+<li><p>Add files to your computer</p>
+<ul>
+<li><p>e.g. new SSH authorized keys</p></li>
+</ul>
+</li>
+<li><p>Research is not exempt from these risks.</p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>As an example, at <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> time</p></li>
+<li><p>Python <code class="docutils literal notranslate"><span class="pre">.pth</span></code> file at interpreter startup</p></li>
+<li><p>Python <code class="docutils literal notranslate"><span class="pre">import</span></code>-time</p></li>
+</ul>
+</div>
+</section>
+<section id="what-info-can-an-attack-get-from-your-computer">
+<h3>What info can an attack get from your computer?<a class="headerlink" href="#what-info-can-an-attack-get-from-your-computer" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Every file on your computer (e.g. secret files in <code class="docutils literal notranslate"><span class="pre">~/</span></code>)</p></li>
+<li><p>Every environment variable</p></li>
+<li><p>Environment variables from other processes (<code class="docutils literal notranslate"><span class="pre">/proc/*/environ</span></code>) (same
+user)</p></li>
+<li><p>Command line from other processes (<code class="docutils literal notranslate"><span class="pre">/proc/*/cmdline</span></code>) (every user)</p></li>
+</ul>
+<p><a class="reference external" href="https://www.stepsecurity.io/blog/microsoft-agent-framework-pypi-package-compromised#payload-capabilities">Read more at the microsoft-agent analysis</a></p>
+<div class="revealjs-notes docutils container" style="display: none">
+<p>Discussion</p>
+<ul class="simple">
+<li><p>What happens if it runs on our cluster?</p></li>
+<li><p>All users’ data.</p></li>
+</ul>
+<p>END SECTION</p>
+</div>
+</section>
+</section>
+<section id="example-supply-chain-attacks">
+<h2>Example supply chain attacks<a class="headerlink" href="#example-supply-chain-attacks" title="Link to this heading"></a></h2>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>Fun section to write - so many things to choose from.</p></li>
+<li><p>This is only a small selection.</p></li>
+</ul>
+</div>
+<section id="example-supply-chain-attacks-1-3">
+<h3>Example supply chain attacks, 1/3<a class="headerlink" href="#example-supply-chain-attacks-1-3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">left-pad</span></code> - package removal (<a class="reference external" href="https://en.wikipedia.org/wiki/Npm_left-pad_incident">ref</a>)</p>
+<ul>
+<li><p>npm author got mad and removed the package</p></li>
+<li><p>Many sites failed building (denial of service).</p></li>
+</ul>
+</li>
+<li><p>SolarWinds hack (<a class="reference external" href="https://en.wikipedia.org/wiki/SolarWinds#2019%E2%80%932020_supply_chain_attacks">ref</a>)</p>
+<ul>
+<li><p>Network monitoring company.</p></li>
+<li><p>Hackers got into SolarWinds.</p></li>
+<li><p>SolarWinds access allowed access to other US government systems.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xz-utils</span></code> (<a class="reference external" href="https://en.wikipedia.org/wiki/XZ_Utils_backdoor">ref</a>)</p>
+<ul>
+<li><p>A new maintainer took over.</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">liblzma</span></code> used in OpenSSH, it allowed root login to a
+certain key.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="example-supply-chain-attacks-2-3">
+<h3>Example supply chain attacks, 2/3<a class="headerlink" href="#example-supply-chain-attacks-2-3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">node-ipc</span></code> - added <code class="docutils literal notranslate"><span class="pre">peacenotwar</span></code> as a dependency (<a class="reference external" href="https://en.wikipedia.org/wiki/Peacenotwar">ref</a>)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">peacenotwar</span></code> detected if it was in RU/BY and overwrote every
+file on computer with heart emoji</p></li>
+</ul>
+</li>
+<li><p>Claude Code in <em>Cursor</em> extension marketplace
+(<a class="reference external" href="https://phorion.io/blog/offical-claude-code-vsx-compromise/">ref</a>)</p>
+<ul>
+<li><p>Extension marketplaces often overlooked as a vector.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">litellm</span></code> (<a class="reference external" href="https://en.wikipedia.org/wiki/LiteLLM#Security">ref</a>)</p>
+<ul>
+<li><p>Attacked twice in one year.</p></li>
+<li><p>Ran arbitrary code even on <em>install</em>.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="honorable-mentions-3-3-1-2-aren-t-attacks">
+<h3>Honorable mentions, 3/3 (1-2 aren’t attacks)<a class="headerlink" href="#honorable-mentions-3-3-1-2-aren-t-attacks" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Samsung fridge update bricking them (<a class="reference external" href="https://arstechnica.com/gadgets/2026/09/owners-mourn-spoiled-food-after-firmware-update-bricks-samsung-smart-fridges/">ref</a>)</p>
+<ul>
+<li><p>Accidental update… not an attack.</p></li>
+</ul>
+</li>
+<li><p>CrowdStrike update in 2024 (<a class="reference external" href="https://en.wikipedia.org/wiki/CrowdStrike#2024_IT_outages">ref</a>)</p>
+<ul>
+<li><p>An auto-update to security software broke other services.</p></li>
+</ul>
+</li>
+<li><p><strong>Yesterday</strong>: <code class="docutils literal notranslate"><span class="pre">agent-framework</span></code> on PyPI
+(<a class="reference external" href="https://www.stepsecurity.io/blog/microsoft-agent-framework-pypi-package-compromised">ref</a>)</p>
+<ul>
+<li><p>Execute at Python startup via <code class="docutils literal notranslate"><span class="pre">.pth</span></code> file (no import needed)</p></li>
+<li><p>Vector: malicious maintainer account added to project.</p></li>
+<li><p>Credential stealer (conf files, env vars, /proc/*/environ)</p></li>
+</ul>
+</li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>Look at agent-framework for an example of how bad it can be.</p></li>
+<li><p>How deep does it go, to physical effects?:</p>
+<ul>
+<li><p>Freezers turned to heat?</p></li>
+<li><p>Outlook outage and chlorine poisoning</p></li>
+</ul>
+</li>
+<li><p>Typosquatting?</p></li>
+</ul>
+<p>END SECTION</p>
+</div>
+<p>…</p>
+<p>Some of these are just caused by accidents or incompetence, but it’s
+worth thinking about the bigger supply chain risk at the same time.</p>
+</section>
+</section>
+<section id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Link to this heading"></a></h2>
+<p>Various observations:</p>
+<ul class="simple">
+<li><p>Many types of SCA:s.</p></li>
+<li><p>Dependencies</p>
+<ul>
+<li><p>Make ecosystems useful (e.g. extension marketplaces).</p></li>
+<li><p>But make more vectors.</p></li>
+</ul>
+</li>
+<li><p>Dependencies can be pulled in recursively.</p>
+<ul>
+<li><p>It’s not just the dependencies you choose.</p></li>
+<li><p>This Sphinx project has 5 direct dependencies leading to <em>91</em>
+installed packages!</p></li>
+</ul>
+</li>
+<li><p>Every new dependency is a risk.</p></li>
+</ul>
+<section id="analysis-level-of-protection">
+<h3>Analysis: level of protection<a class="headerlink" href="#analysis-level-of-protection" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Our primary protection seems to be “don’t run anything un-approved”.</p></li>
+<li><p>Most of our work is user-isolated, not project-isolated.</p>
+<ul>
+<li><p>One user account has access to many projects.</p></li>
+<li><p>One compromised dependency can affect <em>every</em> project’s data.</p></li>
+</ul>
+</li>
+<li><p>We are quite un-prepared.</p></li>
+</ul>
+</section>
+<section id="analysis-my-opinions">
+<h3>Analysis: my opinions<a class="headerlink" href="#analysis-my-opinions" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>I don’t want to run any custom environments without protection.</p></li>
+<li><p>Containerization seems appropriate.</p>
+<ul>
+<li><p>There can be SCA combined with container escape.</p></li>
+<li><p>… but still simple containerization reduces the blast radius a lot.</p></li>
+</ul>
+</li>
+<li><p>Can easily turn into “dump more stuff on our users”</p></li>
+</ul>
+<p>A universal solution seems unlikely.</p>
+</section>
+<section id="usability-considerations">
+<h3>Usability considerations<a class="headerlink" href="#usability-considerations" title="Link to this heading"></a></h3>
+<p>Our protection should:</p>
+<ul class="simple">
+<li><p><em>Easy to use</em> since it needs to be used <em>everywhere</em>.</p></li>
+<li><p>Low start-up barrier (easy to use for every throw-away test)</p></li>
+<li><p>Works on different platforms</p></li>
+<li><p>Works local and remote</p></li>
+<li><p>Easy to understand</p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<p>END OF SECTION</p>
+</div>
+<p>…</p>
+<p>We can think of many solutions, but what is most usable?  Our audience
+is researchers, not Linux experts.  On top of that, consider how much
+harder it is to manage on other OSs.</p>
+</section>
+</section>
+<section id="possible-solutions">
+<h2>Possible solutions<a class="headerlink" href="#possible-solutions" title="Link to this heading"></a></h2>
+<section id="minimizing-or-reviewing-dependencies">
+<h3>Minimizing or reviewing dependencies<a class="headerlink" href="#minimizing-or-reviewing-dependencies" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>I think minimizing is a good idea, but not always practical.</p></li>
+<li><p>IT Services thinks we get everything approved, but we know that’s not
+happening.</p></li>
+<li><p><strong>Analysis: not enough</strong></p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>Reviewing everything is impossible.</p></li>
+<li><p>Always good to use less stuff.</p></li>
+<li><p>Science still needs lots of weird dependencies.</p></li>
+<li><p>Joke: Can AI rewrite everything for your own code so you don’t need
+dependencies anymore?</p></li>
+</ul>
+</div>
+</section>
+<section id="cooldowns">
+<h3>Cooldowns<a class="headerlink" href="#cooldowns" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Concept: a package must be on the archive for X days before it is
+eligible for installation</p></li>
+<li><p>For example</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--exclude-newer</span> <span class="pre">'3</span> <span class="pre">days'</span> <span class="pre">foo</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--uploaded-prior-to</span> <span class="pre">P3D</span> <span class="pre">foo</span></code></p></li>
+<li><p>See more: <a class="reference external" href="https://cooldowns.dev/">https://cooldowns.dev/</a></p></li>
+</ul>
+</li>
+<li><p>Side-effect: delays security updates.</p></li>
+<li><p><strong>Analysis: good practice, usable, not enough for my tastes.</strong></p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>Buffer time between upload and first install</p></li>
+<li><p>If everyone uses, then ???</p></li>
+<li><p>But at least it gives automated scanners time</p></li>
+</ul>
+</div>
+</section>
+<section id="locking-dependencies">
+<h3>Locking dependencies<a class="headerlink" href="#locking-dependencies" title="Link to this heading"></a></h3>
+<p>e.g. <code class="docutils literal notranslate"><span class="pre">pylock.toml</span></code>, <code class="docutils literal notranslate"><span class="pre">uv.lock</span></code></p>
+<ul class="simple">
+<li><p>Create lockfile with exact versions for your environment.</p></li>
+<li><p>Fewer updates –&gt; smaller attack window.</p></li>
+<li><p>Good practice for research.</p></li>
+<li><p>Maybe not flexible enough for developers</p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>This is a good idea, but for me…</p>
+<ul>
+<li><p>I want to rotate dependencies in my dev environment frequently</p></li>
+<li><p>and find breaking updates quickly.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="containerization-and-linux-namespaces">
+<h3>Containerization and Linux namespaces<a class="headerlink" href="#containerization-and-linux-namespaces" title="Link to this heading"></a></h3>
+<p>e.g. run in Apptainer.</p>
+<ul class="simple">
+<li><p>Reasonable (but “containers aren’t designed for security”).</p></li>
+<li><p>Still much better than nothing.</p></li>
+<li><p>e.g. Apptainer, bubblewrap</p></li>
+<li><p><strong>Analysis: not perfect but good.  Needs usability to be widely
+adopted.</strong></p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>I like this</p></li>
+<li><p>You know Apptainer</p></li>
+<li><p>Bubblewrap more directly uses namespaces</p></li>
+<li><p>I made a way to use containers without building a new one</p></li>
+</ul>
+</div>
+</section>
+<section id="vms-separate-accounts-enclaves-etc">
+<h3>VMs, separate accounts, enclaves, etc<a class="headerlink" href="#vms-separate-accounts-enclaves-etc" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Request separate VMs for everything?</p></li>
+<li><p>Isolate projects by separate user accounts?</p></li>
+<li><p><strong>Analysis: too heavyweight to be widely used at the scale we need.</strong></p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>I guess we know what virtual machines are</p></li>
+<li><p>Also separate user account ideas</p></li>
+<li><p>Too heavyweight</p></li>
+</ul>
+</div>
+</section>
+<section id="hierarchy-of-controls">
+<h3>Hierarchy of controls<a class="headerlink" href="#hierarchy-of-controls" title="Link to this heading"></a></h3>
+<p>This is a concept from industrial safety:</p>
+<img alt="https://upload.wikimedia.org/wikipedia/commons/3/36/NIOSH%E2%80%99s_%E2%80%9CHierarchy_of_Controls_infographic%E2%80%9D_as_SVG.svg" src="https://upload.wikimedia.org/wikipedia/commons/3/36/NIOSH%E2%80%99s_%E2%80%9CHierarchy_of_Controls_infographic%E2%80%9D_as_SVG.svg" />
+<p>Where does each solution fit?</p>
+<p>[image: <a class="reference external" href="https://commons.wikimedia.org/wiki/File:NIOSH_Hierarchy_of_Controls.png">NIOSH via Wikimedia Commons</a>]</p>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>You know I need something about accident investigations, right?</p></li>
+</ul>
+</div>
+<p>…</p>
+<p>We shouldn’t just dump more load onto our users.  Is there any
+possible way to re-design things to make things naturally easier?</p>
+</section>
+<section id="possible-solutions-a-list">
+<h3>Possible solutions: a list<a class="headerlink" href="#possible-solutions-a-list" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Minimize dependencies</p></li>
+<li><p>Review every dependency</p></li>
+<li><p>Lock dependencies, update infrequently</p></li>
+<li><p>“Cooldowns” (delayed install)</p></li>
+<li><p>Containers: Apptainer, etc.</p></li>
+<li><p>Automated scanning?</p></li>
+<li><p>Separate user accounts for different projects</p></li>
+<li><p>Virtual machines for each project</p></li>
+<li><p>Secure data enclaves (CSC SD-services, Aalto SecData)</p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>Many options</p></li>
+<li><p>Cooldowns and locking good idea for end-user projects.</p></li>
+<li><p>My solution: Minimize.  Everything in container.  Everything.</p></li>
+<li><p>Many are not usable or agile enough.</p></li>
+<li><p><em>not</em> including filling out forms here.</p>
+<ul>
+<li><p>Software bill of materials (list dependencies)</p></li>
+<li><p>Legislate liabilities</p></li>
+<li><p>Ask about economic impact of regulation</p></li>
+</ul>
+</li>
+</ul>
+<p>What is practical?  –&gt; Discussion later</p>
+<p>END OF SECTION</p>
+</div>
+</section>
+</section>
+<section id="demo-venv-apptainer">
+<h2>Demo: venv-apptainer<a class="headerlink" href="#demo-venv-apptainer" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>I wrote venv-apptainer to isolate <em>every</em> Python project.</p></li>
+<li><p>I am not saying others should use it (but I do think it’s good).</p>
+<ul>
+<li><p>Should have more docs and testing before wide usage.</p></li>
+</ul>
+</li>
+<li><p>This demo is to give some technical aspect to the seminar.</p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>Wanted to say something technical</p></li>
+<li><p>Not saying this is the best (but it works well for me)</p></li>
+<li><p>Go/no-go for the section?</p></li>
+</ul>
+</div>
+<p>…</p>
+<p><a class="reference external" href="https://github.com/rkdarst/venv-apptainer">https://github.com/rkdarst/venv-apptainer</a></p>
+<section id="executive-summary">
+<h3>Executive summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>I (rkdarst) made this: <a class="reference external" href="https://github.com/rkdarst/venv-apptainer">https://github.com/rkdarst/venv-apptainer</a></p></li>
+</ul>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>vea
+<span class="go">... creating ./venva/ from requirements.txt</span>
+<span class="gp">$ </span>which<span class="w"> </span>python
+<span class="go">./venva/bin/python       &lt;-- wrapper script for container</span>
+<span class="gp">$ </span>python<span class="w"> </span>my_file.py
+<span class="go">... runs isolated to $PWD automatically</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Designed for standalone project dir isolation</p></li>
+<li><p>Supports pip, conda, uv</p></li>
+<li><p>I’ve used it for every <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code> since June-ish.</p></li>
+</ul>
+</section>
+<section id="background-and-history">
+<h3>Background and history<a class="headerlink" href="#background-and-history" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>From Radovan: told me of a <code class="docutils literal notranslate"><span class="pre">ve</span></code> alias for making envs.</p></li>
+<li><p>For years, I’ve had a <code class="docutils literal notranslate"><span class="pre">ve</span></code> shell function that:</p>
+<ul>
+<li><p>makes <code class="docutils literal notranslate"><span class="pre">./venv/</span></code> if it doesn’t exist</p>
+<ul>
+<li><p>automatically installs <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></p></li>
+</ul>
+</li>
+<li><p>activates <code class="docutils literal notranslate"><span class="pre">./venv/</span></code> if it exists</p></li>
+</ul>
+</li>
+<li><p>I wanted a new version using containers.</p></li>
+</ul>
+</section>
+<section id="design-basis">
+<h3>Design basis<a class="headerlink" href="#design-basis" title="Link to this heading"></a></h3>
+<p>I wanted something with:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">$PWD</span></code> mounted in the container (and nothing else).</p></li>
+<li><p>Suitable for mass use: easy <code class="docutils literal notranslate"><span class="pre">venv</span></code> for every project.</p></li>
+<li><p>No config files - simple use case only.</p></li>
+<li><p>Safe by default.</p></li>
+<li><p>Wrapper scripts for binaries in the environment (easy execution).</p></li>
+<li><p><em>Not</em> building a new container for every project.</p></li>
+<li><p>100% human written.</p></li>
+</ul>
+</section>
+<section id="filesystem-layout-of-venva">
+<h3>Filesystem layout of <code class="docutils literal notranslate"><span class="pre">./venva/</span></code><a class="headerlink" href="#filesystem-layout-of-venva" title="Link to this heading"></a></h3>
+<p>On host: everything contained in <code class="docutils literal notranslate"><span class="pre">./venva/</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">venva</span><span class="o">/</span>          <span class="o">--&gt;</span> <span class="n">Base</span> <span class="nb">dir</span>
+<span class="o">./</span><span class="n">venva</span><span class="o">/*.</span><span class="n">squashfs</span> <span class="o">--&gt;</span> <span class="n">generated</span> <span class="n">squashfs</span> <span class="n">of</span> <span class="n">env</span>
+<span class="o">./</span><span class="n">venva</span><span class="o">/</span><span class="n">exec</span>      <span class="o">--&gt;</span> <span class="n">Execution</span> <span class="n">wrapper</span> <span class="p">(</span><span class="n">shell</span> <span class="ow">or</span> <span class="n">command</span><span class="p">)</span>
+<span class="o">./</span><span class="n">venva</span><span class="o">/</span><span class="nb">bin</span><span class="o">/*</span>     <span class="o">--&gt;</span> <span class="n">Wrapper</span> <span class="n">scripts</span> <span class="k">for</span> <span class="n">everything</span>
+                      <span class="ow">in</span> <span class="o">/</span><span class="n">venv</span><span class="o">-</span><span class="n">apptainer</span><span class="o">/</span><span class="nb">bin</span><span class="o">/*</span>
+<span class="o">./</span><span class="n">venva</span><span class="o">/</span><span class="n">activate</span>  <span class="o">--&gt;</span> <span class="n">activation</span> <span class="n">wrapper</span>
+</pre></div>
+</div>
+<p>(pip/conda/uv/etc cache dirs are also mounted)</p>
+<p>Inside container layout:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/venv-apptainer/</span></code> is the venv.</p></li>
+<li><p>Other paths mounted as on the host (<code class="docutils literal notranslate"><span class="pre">$PWD</span></code>, etc.).</p></li>
+</ul>
+</section>
+<section id="usage-my-automation">
+<h3>Usage (my automation)<a class="headerlink" href="#usage-my-automation" title="Link to this heading"></a></h3>
+<p>Has my preferred auto-detection for <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>,
+<code class="docutils literal notranslate"><span class="pre">environment.yml</span></code>, <code class="docutils literal notranslate"><span class="pre">pylock.toml</span></code>, etc.</p>
+<p>What I do:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">vea</span></code> (auto-detect requirements, and make environment and activate it)</p></li>
+<li><p>Run whatever (<code class="docutils literal notranslate"><span class="pre">sphinx-build</span></code>), wrapper <code class="docutils literal notranslate"><span class="pre">./venva/bin/sphinx-build</span></code>
+runs in container with <code class="docutils literal notranslate"><span class="pre">$PWD</span></code> mounted.</p></li>
+</ol>
+<p>(do something else; come back later):</p>
+<ol class="arabic simple" start="3">
+<li><p><code class="docutils literal notranslate"><span class="pre">vea</span></code> (re-activates existing environment)</p></li>
+</ol>
+</section>
+<section id="usage-manual-control-of-install">
+<h3>Usage: Manual control of install<a class="headerlink" href="#usage-manual-control-of-install" title="Link to this heading"></a></h3>
+<p>Can flexibly control the install options:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>vea<span class="w"> </span>--pip<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>other_dependency
+<span class="gp">$ </span>vea<span class="w"> </span>--conda<span class="w"> </span>-f<span class="w"> </span>env-test.yml
+<span class="gp">$ </span>vea<span class="w"> </span>--uv<span class="w"> </span>sync
+<span class="gp">$ </span>vea<span class="w"> </span>--uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>ARGS
+<span class="gp">#</span><span class="c1"># `pip install -e` of another project to here</span>
+<span class="gp">$ </span>vea<span class="w"> </span>--bind-ro<span class="w"> </span>../other/<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>-e<span class="w"> </span>../other/
+</pre></div>
+</div>
+<p>…</p>
+<p>Want to try it yourself?</p>
+<ul class="simple">
+<li><p><strong>You have requirements.txt and use pip</strong>: <code class="docutils literal notranslate"><span class="pre">vea</span></code></p></li>
+<li><p><strong>You have environment.yml and use miniconda</strong>: <code class="docutils literal notranslate"><span class="pre">vea</span></code></p></li>
+<li><p><strong>You have pyproject.toml and use uv</strong>: <code class="docutils literal notranslate"><span class="pre">vea</span> <span class="pre">--uv</span> <span class="pre">sync</span></code></p></li>
+</ul>
+</section>
+<section id="advanced-options">
+<h3>Advanced options<a class="headerlink" href="#advanced-options" title="Link to this heading"></a></h3>
+<p>I’ve added the advanced options I need:</p>
+<ul class="simple">
+<li><p>Custom binds (<code class="docutils literal notranslate"><span class="pre">--bind</span></code>, <code class="docutils literal notranslate"><span class="pre">--bind-ro</span></code>)</p></li>
+<li><p>Custom images (<code class="docutils literal notranslate"><span class="pre">--img</span></code>)</p></li>
+<li><p>No squashfs (env can be updated): <code class="docutils literal notranslate"><span class="pre">--no-squash</span></code></p></li>
+</ul>
+<p>Limitations:</p>
+<ul class="simple">
+<li><p>Not designed for system library integration (GPU, Slurm) but could
+probably be added.</p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<p>END OF SECTION</p>
+</div>
+</section>
+</section>
+<section id="wrap-up-and-discussion">
+<h2>Wrap up and discussion<a class="headerlink" href="#wrap-up-and-discussion" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>I would be happy if anyone else demoed solutions.</p></li>
+<li><p>Most <strong>usable</strong> solutions for researchers?</p></li>
+<li><p>How can we search for bad packages?</p>
+<ul>
+<li><p>Can hide in environments, containers, …</p></li>
+</ul>
+</li>
+<li><p>Any other questions and comments?</p></li>
+</ul>
+<div class="revealjs-notes docutils container" style="display: none">
+<ul class="simple">
+<li><p>There is a lot to do, as usual biggest problem is usability.</p></li>
+<li><p>There is plenty more legal and administrative stuff</p>
+<ul>
+<li><p>Cyber Resilience Act</p>
+<ul>
+<li><p>Effect on open source</p></li>
+<li><p>Paper security != real security (CrowdStrike) (“is inserting one
+software into every critical path really security?”)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>On my side I learned I need –pid in venv-apptainer.</p></li>
+<li><p>Trust the user vs block the user (e.g. locked-down OS)</p></li>
+</ul>
+</div>
+<p>…</p>
+<p>In conclusion, I think that supply chain attacks are very relevant to
+scientists who install and use lots of different software.  There are
+many solutions, but as usual the problem is making it usable enough
+for mass adoption.  Us HPC admins have been thinking about this and
+occasionally looking for vulnerable packages, but I think we need to
+go beyond reactive and start figuring out how to proactively protect
+our users.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../" class="btn btn-neutral float-left" title="Misc talks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, The contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
