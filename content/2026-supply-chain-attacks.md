@@ -594,3 +594,13 @@ END OF SECTION
 * On my side I learned I need --pid in venv-apptainer.
 * Trust the user vs block the user (e.g. locked-down OS)
 :::
+
+...
+
+In conclusion, I think that supply chain attacks are very relevant to
+scientists who install and use lots of different software.  There are
+many solutions, but as usual the problem is making it usable enough
+for mass adoption.  Us HPC admins have been thinking about this and
+occasionally looking for vulnerable packages, but I think we need to
+go beyond reactive and start figuring out how to proactively protect
+our users.
