@@ -74,6 +74,12 @@ Security](https://en.wikipedia.org/wiki/Computer_security) for more.
   (unrelated to SCAs)
 :::
 
+...
+
+I mention these just because you have probably been hearing a lot
+about HPC cluster security lately, and these are the most important
+terms.  Reading the linked Wikipedia article is probably a good
+summary for everyone.
 
 
 
@@ -112,6 +118,7 @@ Ways to get a bad package in the supply chain:
 * ... but it can be much more.
 * Is Denial of Service a SCA?
 :::
+
 
 
 ### What can SCA:s do, once on your computer?
@@ -216,6 +223,11 @@ END SECTION
 END SECTION
 :::
 
+...
+
+Some of these are just caused by accidents or incompetence, but it's
+worth thinking about the bigger supply chain risk at the same time.
+
 
 
 ## Analysis
@@ -233,6 +245,7 @@ Various observations:
 * Every new dependency is a risk.
 
 
+
 ### Analysis: level of protection
 
 * Our primary protection seems to be "don't run anything un-approved".
@@ -240,6 +253,7 @@ Various observations:
   * One user account has access to many projects.
   * One compromised dependency can affect *every* project's data.
 * We are quite un-prepared.
+
 
 
 ### Analysis: my opinions
@@ -251,7 +265,6 @@ Various observations:
 * Can easily turn into "dump more stuff on our users"
 
 A universal solution seems unlikely.
-
 
 
 
@@ -268,6 +281,12 @@ Our protection should:
 :::{revealjs-notes}
 END OF SECTION
 :::
+
+...
+
+We can think of many solutions, but what is most usable?  Our audience
+is researchers, not Linux experts.  On top of that, consider how much
+harder it is to manage on other OSs.
 
 
 
@@ -376,6 +395,11 @@ Where does each solution fit?
 * You know I need something about accident investigations, right?
 :::
 
+...
+
+We shouldn't just dump more load onto our users.  Is there any
+possible way to re-design things to make things naturally easier?
+
 
 
 ### Possible solutions: a list
@@ -420,6 +444,10 @@ END OF SECTION
 * Not saying this is the best (but it works well for me)
 * Go/no-go for the section?
 :::
+
+...
+
+<https://github.com/rkdarst/venv-apptainer>
 
 
 
